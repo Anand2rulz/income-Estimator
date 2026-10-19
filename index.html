@@ -1,0 +1,1397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Income Manager</title>
+
+<style>
+:root {
+    --primary: #5b5ce2;
+    --primary-dark: #4546bd;
+    --background: #f4f6fb;
+    --card: #ffffff;
+    --text: #20243a;
+    --muted: #777f95;
+    --border: #e5e8f0;
+    --green: #159b69;
+    --red: #dc3545;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+button, input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Authentication */
+
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 34px;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px #25265c30;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.auth-card h2 {
+    margin: 18px 0 8px;
+}
+
+.subtitle {
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px #5b5ce21a;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+.primary-btn:hover {
+    background: var(--primary-dark);
+}
+
+.auth-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 2;
+}
+
+.link-btn {
+    background: none;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.message {
+    font-size: 14px;
+    margin-top: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.success {
+    color: var(--green);
+}
+
+.error {
+    color: var(--red);
+}
+
+/* Main application */
+
+#app {
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 245px;
+    background: #202342;
+    color: white;
+    padding: 25px 16px;
+    z-index: 10;
+    overflow-y: auto;
+}
+
+.sidebar .logo {
+    color: white;
+    font-size: 23px;
+    padding: 0 12px;
+    margin-bottom: 35px;
+}
+
+.nav-label {
+    font-size: 11px;
+    color: #a8acc5;
+    padding: 0 12px;
+    margin: 22px 0 10px;
+    letter-spacing: 1.3px;
+}
+
+.nav-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 13px 12px;
+    border-radius: 9px;
+    margin-bottom: 6px;
+    color: #d6d9ed;
+    background: transparent;
+    font-size: 14px;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+    background: #5556cf;
+    color: white;
+}
+
+.logout-btn {
+    margin-top: 24px;
+    color: #ffb8bf;
+}
+
+.main {
+    margin-left: 245px;
+    padding: 28px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.topbar h1 {
+    font-size: 26px;
+}
+
+.topbar p {
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.user-badge {
+    background: white;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.section h2 {
+    font-size: 23px;
+    margin-bottom: 9px;
+}
+
+.section-description {
+    color: var(--muted);
+    margin-bottom: 23px;
+    line-height: 1.5;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.stat-card {
+    padding: 22px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    min-width: 0;
+}
+
+.stat-card p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 13px;
+}
+
+.stat-card h3 {
+    font-size: 25px;
+    overflow-wrap: anywhere;
+}
+
+.stat-icon {
+    font-size: 25px;
+    margin-bottom: 15px;
+}
+
+.panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    min-width: 0;
+}
+
+.panel h3 {
+    margin-bottom: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.form-actions {
+    margin-top: 18px;
+}
+
+.action-btn {
+    background: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.action-btn:hover {
+    background: var(--primary-dark);
+}
+
+.secondary-btn {
+    background: #ececff;
+    color: var(--primary);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.danger-btn {
+    background: #fff0f1;
+    color: var(--red);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+th, td {
+    text-align: left;
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+}
+
+th {
+    color: var(--muted);
+    background: #fafbfe;
+    font-weight: 700;
+}
+
+td {
+    overflow-wrap: anywhere;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 28px;
+}
+
+.profile-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-item span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.profile-item strong {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        padding: 16px;
+    }
+
+    .sidebar .logo {
+        margin-bottom: 18px;
+    }
+
+    .nav-label {
+        margin-top: 12px;
+    }
+
+    .nav-btn {
+        display: inline-block;
+        width: auto;
+        margin-right: 4px;
+        padding: 10px;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .main {
+        padding: 14px;
+    }
+
+    .panel {
+        padding: 17px;
+    }
+
+    .auth-card {
+        padding: 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="auth-wrapper">
+    <div class="auth-card">
+        <div class="logo">Income Manager</div>
+        <h2>Welcome Back!</h2>
+        <p class="subtitle">Login to manage your income.</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input id="loginEmail" type="email" required
+                       autocomplete="email" placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" type="password" required
+                       autocomplete="current-password" placeholder="Enter password">
+            </div>
+
+            <button class="primary-btn" type="submit">Login</button>
+        </form>
+
+        <div id="loginMessage" class="message"></div>
+
+        <div class="auth-links">
+            <div>
+                <button class="link-btn" onclick="showAuth('forgotScreen')">
+                    Forgot Password?
+                </button>
+            </div>
+            <div>
+                Don't have an account?
+                <button class="link-btn" onclick="showAuth('registerScreen')">
+                    Register
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REGISTER -->
+<div id="registerScreen" class="auth-wrapper hidden">
+    <div class="auth-card">
+        <div class="logo">Income Manager</div>
+        <h2>Create Account</h2>
+        <p class="subtitle">Register to start managing your income.</p>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="registerName">Full Name</label>
+                <input id="registerName" type="text" required minlength="2"
+                       maxlength="100" autocomplete="name">
+            </div>
+
+            <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input id="registerEmail" type="email" required
+                       autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <input id="registerPassword" type="password" required
+                       minlength="8" maxlength="128"
+                       autocomplete="new-password">
+            </div>
+
+            <button class="primary-btn" type="submit">Create Account</button>
+        </form>
+
+        <div id="registerMessage" class="message"></div>
+
+        <div class="auth-links">
+            Already registered?
+            <button class="link-btn" onclick="showAuth('loginScreen')">
+                Login
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- FORGOT PASSWORD -->
+<div id="forgotScreen" class="auth-wrapper hidden">
+    <div class="auth-card">
+        <div class="logo">Income Manager</div>
+        <h2>Forgot Password?</h2>
+        <p class="subtitle">
+            Enter your registered email to request a password reset link.
+        </p>
+
+        <form id="forgotForm">
+            <div class="form-group">
+                <label for="forgotEmail">Registered Email</label>
+                <input id="forgotEmail" type="email" required
+                       autocomplete="email">
+            </div>
+
+            <button class="primary-btn" type="submit">Send Reset Link</button>
+        </form>
+
+        <div id="forgotMessage" class="message"></div>
+
+        <div class="auth-links">
+            <button class="link-btn" onclick="showAuth('loginScreen')">
+                Back to Login
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- RESET PASSWORD -->
+<div id="resetScreen" class="auth-wrapper hidden">
+    <div class="auth-card">
+        <div class="logo">Income Manager</div>
+        <h2>Reset Password</h2>
+        <p class="subtitle">Create a new password for your account.</p>
+
+        <form id="resetForm">
+            <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input id="newPassword" type="password" required
+                       minlength="8" maxlength="128"
+                       autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input id="confirmPassword" type="password" required
+                       minlength="8" maxlength="128"
+                       autocomplete="new-password">
+            </div>
+
+            <button class="primary-btn" type="submit">Reset Password</button>
+        </form>
+
+        <div id="resetMessage" class="message"></div>
+
+        <div class="auth-links">
+            <button class="link-btn" onclick="showAuth('loginScreen')">
+                Back to Login
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+
+    <aside class="sidebar">
+        <div class="logo">Income Manager</div>
+
+        <div class="nav-label">MAIN MENU</div>
+
+        <button class="nav-btn active"
+                onclick="showSection('dashboardSection', this)">
+            🏠 Dashboard
+        </button>
+
+        <button class="nav-btn"
+                onclick="showSection('addIncomeSection', this)">
+            ➕ Add Income
+        </button>
+
+        <button class="nav-btn"
+                onclick="showSection('updateIncomeSection', this)">
+            ✏️ Update Income
+        </button>
+
+        <button class="nav-btn"
+                onclick="showSection('historySection', this)">
+            📋 Income History
+        </button>
+
+        <div class="nav-label">ACCOUNT</div>
+
+        <button class="nav-btn"
+                onclick="showSection('profileSection', this)">
+            👤 My Profile
+        </button>
+
+        <button class="nav-btn logout-btn" onclick="logout()">
+            🚪 Logout
+        </button>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1 id="pageTitle">Dashboard</h1>
+                <p>Track and manage your income easily.</p>
+            </div>
+
+            <div class="user-badge">
+                Welcome, <span id="welcomeName">User</span>
+            </div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <section id="dashboardSection" class="section">
+            <h2>Dashboard Overview</h2>
+            <p class="section-description">
+                Your income summary at a glance.
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <p>Total Income</p>
+                    <h3 id="totalIncome">₹0</h3>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🧾</div>
+                    <p>Income Records</p>
+                    <h3 id="incomeCount">0</h3>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <p>Latest Income</p>
+                    <h3 id="latestIncome">₹0</h3>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Recent Income</h3>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentIncomeTable">
+                            <tr>
+                                <td colspan="2" class="empty-state">
+                                    Loading income records...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADD INCOME -->
+        <section id="addIncomeSection" class="section hidden">
+            <h2>Add Income</h2>
+            <p class="section-description">
+                Add an income record to your account.
+            </p>
+
+            <div class="panel">
+                <h3>Income Details</h3>
+
+                <form id="addIncomeForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="incomeDate">Income Date</label>
+                            <input type="date" id="incomeDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="incomeAmount">Amount (₹)</label>
+                            <input type="number" id="incomeAmount"
+                                   min="1" step="1" required
+                                   placeholder="Enter amount">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="action-btn" type="submit">
+                            Save Income
+                        </button>
+                    </div>
+                </form>
+
+                <div id="addIncomeMessage" class="message"></div>
+            </div>
+        </section>
+
+        <!-- UPDATE INCOME -->
+        <section id="updateIncomeSection" class="section hidden">
+            <h2>Update Income</h2>
+            <p class="section-description">
+                Select an existing income date and change its amount.
+            </p>
+
+            <div class="panel">
+                <h3>Update Existing Record</h3>
+
+                <form id="updateIncomeForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="updateDate">Existing Income Date</label>
+                            <select id="updateDate" required>
+                                <option value="">Select income date</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updateAmount">New Amount (₹)</label>
+                            <input type="number" id="updateAmount"
+                                   min="1" step="1" required
+                                   placeholder="Enter updated amount">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="action-btn" type="submit">
+                            Update Income
+                        </button>
+                    </div>
+                </form>
+
+                <div id="updateIncomeMessage" class="message"></div>
+            </div>
+        </section>
+
+        <!-- INCOME HISTORY -->
+        <section id="historySection" class="section hidden">
+            <h2>Income History</h2>
+            <p class="section-description">
+                View all your income records.
+            </p>
+
+            <div class="panel">
+                <h3>All Records</h3>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incomeHistoryTable">
+                            <tr>
+                                <td colspan="2" class="empty-state">
+                                    No records found.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="historyMessage" class="message"></div>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="profileSection" class="section hidden">
+            <h2>My Profile</h2>
+            <p class="section-description">
+                View your account details.
+            </p>
+
+            <div class="panel">
+                <h3>Personal Information</h3>
+
+                <div class="profile-item">
+                    <span>Full Name</span>
+                    <strong id="profileName">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>Email Address</span>
+                    <strong id="profileEmail">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>Total Income</span>
+                    <strong id="profileTotal">₹0</strong>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+"use strict";
+
+/* ---------------- CONFIGURATION ---------------- */
+
+const API_URL = "http://127.0.0.1:8000";
+const TOKEN_KEY = "income_manager_access_token";
+
+let currentUser = null;
+let incomeRecords = [];
+
+const $ = (id) => document.getElementById(id);
+
+function getToken() {
+    return sessionStorage.getItem(TOKEN_KEY);
+}
+
+function formatMoney(amount) {
+    return "₹" + Number(amount || 0).toLocaleString("en-IN");
+}
+
+function formatDate(dateString) {
+    if (!dateString) return "-";
+
+    const parts = String(dateString).split("-");
+    if (parts.length !== 3) return dateString;
+
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+}
+
+function getRecordDate(record) {
+    return record.date ?? record.Date ?? "";
+}
+
+function getRecordAmount(record) {
+    return Number(record.amnt ?? record.amount ?? record.Amnt ?? 0);
+}
+
+function setMessage(id, message, isError = false) {
+    const element = $(id);
+    element.textContent = message;
+    element.className = "message " + (isError ? "error" : "success");
+}
+
+function clearMessage(id) {
+    $(id).textContent = "";
+    $(id).className = "message";
+}
+
+/* ---------------- API REQUEST HELPER ---------------- */
+
+async function apiRequest(path, options = {}) {
+    const headers = {
+        ...(options.headers || {})
+    };
+
+    if (options.body && !headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    const token = getToken();
+
+    if (token && options.auth !== false) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(API_URL + path, {
+        ...options,
+        headers
+    });
+
+    let data = {};
+
+    try {
+        data = await response.json();
+    } catch {
+        data = {};
+    }
+
+    if (response.status === 401 && options.auth !== false) {
+        sessionStorage.removeItem(TOKEN_KEY);
+    }
+
+    if (!response.ok) {
+        let detail = data.detail || data.message || "Request failed";
+
+        if (Array.isArray(detail)) {
+            detail = detail.map(item => item.msg || "Invalid input").join(", ");
+        }
+
+        throw new Error(detail);
+    }
+
+    return data;
+}
+
+/* ---------------- AUTH SCREENS ---------------- */
+
+function showAuth(screenId) {
+    ["loginScreen", "registerScreen", "forgotScreen", "resetScreen"]
+        .forEach(id => $(id).classList.add("hidden"));
+
+    $("app").classList.add("hidden");
+    $(screenId).classList.remove("hidden");
+
+    ["loginMessage", "registerMessage", "forgotMessage", "resetMessage"]
+        .forEach(clearMessage);
+}
+
+function showApp() {
+    ["loginScreen", "registerScreen", "forgotScreen", "resetScreen"]
+        .forEach(id => $(id).classList.add("hidden"));
+
+    $("app").classList.remove("hidden");
+}
+
+function showSection(sectionId, button = null) {
+    document.querySelectorAll(".section").forEach(section => {
+        section.classList.add("hidden");
+    });
+
+    $(sectionId).classList.remove("hidden");
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    if (button) {
+        button.classList.add("active");
+    } else {
+        const matchingButton = Array.from(
+            document.querySelectorAll(".nav-btn")
+        ).find(btn => btn.getAttribute("onclick")?.includes(sectionId));
+
+        if (matchingButton) matchingButton.classList.add("active");
+    }
+
+    const titles = {
+        dashboardSection: "Dashboard",
+        addIncomeSection: "Add Income",
+        updateIncomeSection: "Update Income",
+        historySection: "Income History",
+        profileSection: "My Profile"
+    };
+
+    $("pageTitle").textContent = titles[sectionId] || "Income Manager";
+
+    if (sectionId === "updateIncomeSection") {
+        populateUpdateDates();
+    }
+
+    if (sectionId === "historySection") {
+        renderHistory();
+    }
+}
+
+/* ---------------- REGISTER ---------------- */
+
+$("registerForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    clearMessage("registerMessage");
+
+    const payload = {
+        name: $("registerName").value.trim(),
+        email: $("registerEmail").value.trim().toLowerCase(),
+        password: $("registerPassword").value
+    };
+
+    try {
+        await apiRequest("/register", {
+            method: "POST",
+            auth: false,
+            body: JSON.stringify(payload)
+        });
+
+        setMessage(
+            "registerMessage",
+            "Account created successfully. Please login."
+        );
+
+        $("registerForm").reset();
+
+        setTimeout(() => showAuth("loginScreen"), 1200);
+    } catch (error) {
+        setMessage("registerMessage", error.message, true);
+    }
+});
+
+/* ---------------- LOGIN ---------------- */
+
+$("loginForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    clearMessage("loginMessage");
+
+    const payload = {
+        email: $("loginEmail").value.trim().toLowerCase(),
+        password: $("loginPassword").value
+    };
+
+    try {
+        const data = await apiRequest("/login", {
+            method: "POST",
+            auth: false,
+            body: JSON.stringify(payload)
+        });
+
+        if (!data.access_token) {
+            throw new Error("Backend did not return an access token.");
+        }
+
+        sessionStorage.setItem(TOKEN_KEY, data.access_token);
+        $("loginForm").reset();
+
+        await startApp();
+    } catch (error) {
+        setMessage("loginMessage", error.message, true);
+    }
+});
+
+/* ---------------- LOAD APP ---------------- */
+
+async function startApp() {
+    showApp();
+
+    try {
+        currentUser = await apiRequest("/me");
+        updateProfile();
+        await loadIncomes();
+        showSection("dashboardSection");
+    } catch (error) {
+        sessionStorage.removeItem(TOKEN_KEY);
+        currentUser = null;
+        incomeRecords = [];
+        showAuth("loginScreen");
+        setMessage("loginMessage", error.message, true);
+    }
+}
+
+function updateProfile() {
+    if (!currentUser) return;
+
+    const name = currentUser.name || "User";
+    const email = currentUser.email || "-";
+
+    $("welcomeName").textContent = name;
+    $("profileName").textContent = name;
+    $("profileEmail").textContent = email;
+}
+
+/* ---------------- INCOME DATA ---------------- */
+
+async function loadIncomes() {
+    const data = await apiRequest("/incomes");
+
+    // Backend should return a JSON array.
+    incomeRecords = Array.isArray(data)
+        ? data
+        : (data.incomes || data.records || []);
+
+    // Sort newest date first.
+    incomeRecords.sort((a, b) =>
+        getRecordDate(b).localeCompare(getRecordDate(a))
+    );
+
+    renderDashboard();
+    renderHistory();
+    populateUpdateDates();
+}
+
+function renderDashboard() {
+    const total = incomeRecords.reduce(
+        (sum, record) => sum + getRecordAmount(record), 0
+    );
+
+    $("totalIncome").textContent = formatMoney(total);
+    $("incomeCount").textContent = incomeRecords.length;
+
+    $("latestIncome").textContent = incomeRecords.length
+        ? formatMoney(getRecordAmount(incomeRecords[0]))
+        : "₹0";
+
+    $("profileTotal").textContent = formatMoney(total);
+
+    const tbody = $("recentIncomeTable");
+    tbody.replaceChildren();
+
+    if (!incomeRecords.length) {
+        tbody.innerHTML = `
+            <tr><td colspan="2" class="empty-state">
+                No income records yet. Add your first income.
+            </td></tr>`;
+        return;
+    }
+
+    incomeRecords.slice(0, 5).forEach(record => {
+        const tr = document.createElement("tr");
+        const dateCell = document.createElement("td");
+        const amountCell = document.createElement("td");
+
+        dateCell.textContent = formatDate(getRecordDate(record));
+        amountCell.textContent = formatMoney(getRecordAmount(record));
+
+        tr.append(dateCell, amountCell);
+        tbody.appendChild(tr);
+    });
+}
+
+function renderHistory() {
+    const tbody = $("incomeHistoryTable");
+    if (!tbody) return;
+
+    tbody.replaceChildren();
+
+    if (!incomeRecords.length) {
+        tbody.innerHTML = `
+            <tr><td colspan="2" class="empty-state">
+                No income records found.
+            </td></tr>`;
+        return;
+    }
+
+    incomeRecords.forEach(record => {
+        const tr = document.createElement("tr");
+        const dateCell = document.createElement("td");
+        const amountCell = document.createElement("td");
+
+        dateCell.textContent = formatDate(getRecordDate(record));
+        amountCell.textContent = formatMoney(getRecordAmount(record));
+
+        tr.append(dateCell, amountCell);
+        tbody.appendChild(tr);
+    });
+}
+
+/* ---------------- ADD INCOME ---------------- */
+
+$("addIncomeForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    clearMessage("addIncomeMessage");
+
+    const date = $("incomeDate").value;
+    const amount = Number($("incomeAmount").value);
+
+    if (!date || !Number.isFinite(amount) || amount <= 0) {
+        setMessage("addIncomeMessage", "Enter a valid date and amount.", true);
+        return;
+    }
+
+    try {
+        await apiRequest("/income", {
+            method: "POST",
+            body: JSON.stringify({
+                Date: date,
+                amnt: amount
+            })
+        });
+
+        setMessage("addIncomeMessage", "Income added successfully!");
+        $("addIncomeForm").reset();
+
+        await loadIncomes();
+    } catch (error) {
+        setMessage("addIncomeMessage", error.message, true);
+    }
+});
+
+/* ---------------- UPDATE INCOME ---------------- */
+
+function populateUpdateDates() {
+    const select = $("updateDate");
+    if (!select) return;
+
+    const previousValue = select.value;
+
+    select.replaceChildren();
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Select income date";
+    select.appendChild(placeholder);
+
+    incomeRecords.forEach(record => {
+        const date = getRecordDate(record);
+        if (!date) return;
+
+        const option = document.createElement("option");
+        option.value = date;
+        option.textContent =
+            `${formatDate(date)} — ${formatMoney(getRecordAmount(record))}`;
+
+        select.appendChild(option);
+    });
+
+    if (incomeRecords.some(record => getRecordDate(record) === previousValue)) {
+        select.value = previousValue;
+    }
+}
+
+$("updateDate").addEventListener("change", function () {
+    const selectedDate = this.value;
+
+    const record = incomeRecords.find(
+        item => getRecordDate(item) === selectedDate
+    );
+
+    $("updateAmount").value = record
+        ? getRecordAmount(record)
+        : "";
+
+    clearMessage("updateIncomeMessage");
+});
+
+$("updateIncomeForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    clearMessage("updateIncomeMessage");
+
+    const date = $("updateDate").value;
+    const amount = Number($("updateAmount").value);
+
+    if (!date) {
+        setMessage("updateIncomeMessage", "Select an existing income date.", true);
+        return;
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        setMessage("updateIncomeMessage", "Enter a valid amount.", true);
+        return;
+    }
+
+    try {
+        const data = await apiRequest("/upincome", {
+            method: "PUT",
+            body: JSON.stringify({
+                Date: date,
+                amnt: amount
+            })
+        });
+
+        setMessage(
+            "updateIncomeMessage",
+            data.message || "Income updated successfully!"
+        );
+
+        await loadIncomes();
+        $("updateDate").value = date;
+
+        const updatedRecord = incomeRecords.find(
+            record => getRecordDate(record) === date
+        );
+
+        $("updateAmount").value = updatedRecord
+            ? getRecordAmount(updatedRecord)
+            : amount;
+    } catch (error) {
+        setMessage("updateIncomeMessage", error.message, true);
+    }
+});
+
+/* ---------------- FORGOT PASSWORD ---------------- */
+
+$("forgotForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    clearMessage("forgotMessage");
+
+    const email = $("forgotEmail").value.trim().toLowerCase();
+
+    try {
+        const data = await apiRequest("/forgot-password", {
+            method: "POST",
+            auth: false,
+            body: JSON.stringify({ email })
+        });
+
+        setMessage(
+            "forgotMessage",
+            data.message || "If the account exists, a reset link will be sent."
+        );
+
+        $("forgotForm").reset();
+    } catch (error) {
+        setMessage("forgotMessage", error.message, true);
+    }
+});
+
+/* ---------------- RESET PASSWORD ---------------- */
+
+$("resetForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    clearMessage("resetMessage");
+
+    const token = new URLSearchParams(window.location.search).get("token");
+    const password = $("newPassword").value;
+    const confirmPassword = $("confirmPassword").value;
+
+    if (!token) {
+        setMessage(
+            "resetMessage",
+            "Reset token is missing. Open the link from your email.",
+            true
+        );
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        setMessage("resetMessage", "Passwords do not match.", true);
+        return;
+    }
+
+    try {
+        const data = await apiRequest("/reset-password", {
+            method: "POST",
+            auth: false,
+            body: JSON.stringify({
+                token: token,
+                new_password: password
+            })
+        });
+
+        setMessage(
+            "resetMessage",
+            data.message || "Password reset successfully. Please login."
+        );
+
+        $("resetForm").reset();
+
+        // Remove token from the address bar after successful reset.
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+
+        setTimeout(() => showAuth("loginScreen"), 1500);
+    } catch (error) {
+        setMessage("resetMessage", error.message, true);
+    }
+});
+
+/* ---------------- LOGOUT ---------------- */
+
+function logout() {
+    sessionStorage.removeItem(TOKEN_KEY);
+    currentUser = null;
+    incomeRecords = [];
+
+    $("loginForm").reset();
+    showAuth("loginScreen");
+}
+
+/* ---------------- INITIAL PAGE LOAD ---------------- */
+
+async function initialize() {
+    const token = getToken();
+    const resetToken = new URLSearchParams(window.location.search).get("token");
+
+    if (resetToken) {
+        showAuth("resetScreen");
+        return;
+    }
+
+    if (token) {
+        await startApp();
+    } else {
+        showAuth("loginScreen");
+    }
+}
+
+initialize();
+</script>
+
+</body>
+</html>
