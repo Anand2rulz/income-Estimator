@@ -11,6 +11,8 @@ from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, EmailStr, Field
 from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
+from database import Base, engine
+
 
 import hashlib
 import secrets
@@ -26,11 +28,14 @@ from database import User_db, Income_db, get_db
 
 app = FastAPI(title="Income Manager API")
 
+Base.metadata.create_all(bind=engine)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500",
-                   "http://localhost:5500"],
-    allow_credentials=False,
+    allow_origins=[
+        "https://flourishing-biscochitos-866e4f.netlify.app"
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
